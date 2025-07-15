@@ -1,5 +1,8 @@
 # MR Reviewer - Analyse de Merge Requests avec IA
 
+[![codecov](https://codecov.io/github/RubenVP2/gitlab-mistral-review/branch/master/graph/badge.svg?token=NCZ4SSC9KU)](https://codecov.io/github/RubenVP2/gitlab-mistral-review)
+
+
 MR Reviewer automatise la revue de code sur GitLab en s'appuyant sur un moteur d'intelligence artificielle (par exemple Mistral). L'application interroge régulièrement vos projets pour détecter les nouvelles demandes de fusion ou les mises à jour, génère un commentaire d'analyse et le publie directement dans la discussion de la MR.
 
 ## Fonctionnalités principales
