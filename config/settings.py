@@ -5,7 +5,10 @@ class Settings(BaseSettings):
     gitlab_token: str = Field(..., env="GITLAB_TOKEN")
     gitlab_url: str = Field(default="https://gitlab.com/api/v4", env="GITLAB_URL")
     mistral_key: str = Field(..., env="MISTRAL_API_KEY")
-    mistral_model: str = Field(..., default="mistral-7b", env="MISTRAL_MODEL")
+    # Provide a default model without marking the field as required.
+    # Passing `...` together with `default` would raise a `TypeError` in Pydantic
+    # because the `default` argument would be specified twice.
+    mistral_model: str = Field(default="mistral-7b", env="MISTRAL_MODEL")
 
     cache_file: str = Field(default="cache.json", env="CACHE_FILE")
     polling_interval: int = Field(default=300, env="POLLING_INTERVAL")
