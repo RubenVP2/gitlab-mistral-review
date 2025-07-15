@@ -4,7 +4,9 @@ from __future__ import annotations
 
 import json
 import logging
-import urllib.request
+from typing import Any
+
+import requests
 
 from app.ports.output.ai_port import AIPort
 from config.prompt import PROMPT_IA
@@ -26,18 +28,17 @@ class MistralAdapter(AIPort):
             "prompt_mode": "reasoning",
             "messages": [{"role": "user", "content": prompt}],
         }
-        data = json.dumps(payload).encode()
-        req = urllib.request.Request(self.url, data=data, method="POST")
-        req.add_header("Authorization", f"Bearer {self.api_key}")
-        req.add_header("Content-Type", "application/json")
+        headers = {
+            "Authorization": f"Bearer {self.api_key}",
+            "Content-Type": "application/json",
+        }
         try:
-            with urllib.request.urlopen(req) as resp:
-                result = json.load(resp)
-            review = (
-                result.get("choices", [{}])[0].get("message", {}).get("content", "")
-            )
-            self.logger.debug(f"Réponse Mistral reçue : {review}")
+            resp = requests.post(self.url, json=payload, headers=headers)
+            resp.raise_for_status()
+            result: Any = resp.json()
+            review = result.get("choices", [{}])[0].get("message", {}).get("content", "")
+            self.logger.debug("Réponse Mistral reçue : %s", review)
             return review
-        except Exception:
-            self.logger.exception("Erreur lors de l'appel à Mistral")
+        except requests.RequestException as exc:
+            self.logger.exception("Erreur lors de l'appel à Mistral: %s", exc)
             return "Erreur de communication avec Mistral."

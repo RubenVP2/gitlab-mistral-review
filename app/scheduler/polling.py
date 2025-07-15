@@ -3,24 +3,29 @@
 from __future__ import annotations
 
 import logging
-import threading
-import time
 from typing import Callable
+
+from apscheduler.schedulers.background import BackgroundScheduler
+
+
+_scheduler: BackgroundScheduler | None = None
 
 
 def start_scheduler(task: Callable[[], None], interval: int) -> None:
-    """Run ``task`` every ``interval`` seconds in a background thread."""
+    """Run ``task`` every ``interval`` seconds using APScheduler."""
+    global _scheduler
     logger = logging.getLogger("Scheduler")
-
-    def loop() -> None:
-        while True:
-            logger.debug("Exécution planifiée")
-            task()
-            time.sleep(interval)
-
-    thread = threading.Thread(target=loop, daemon=True)
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(task, "interval", seconds=interval)
+    scheduler.start()
+    _scheduler = scheduler
     logger.info("Scheduler démarré (intervalle=%ss)", interval)
-    thread.start()
-    # Keep the main thread alive
-    thread.join()
+
+
+def stop_scheduler() -> None:
+    """Stop the running scheduler if any."""
+    global _scheduler
+    if _scheduler:
+        _scheduler.shutdown()
+        _scheduler = None
 
