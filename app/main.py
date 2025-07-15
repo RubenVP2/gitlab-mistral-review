@@ -1,4 +1,5 @@
 import time
+
 from app.adapters.gitlab_adapter import GitLabAdapter
 from app.adapters.mistral_adapter import MistralAdapter
 from app.adapters.cache_adapter import JSONCacheAdapter
@@ -9,25 +10,23 @@ from config.logging import configure_logging
 
 
 def main():
-    """
-    Main entry point for the application.
-
-    Initializes the logging, adapters, and starts the scheduler to review merge requests.
-    This function is responsible for setting up the environment and starting the review process.
-    """
+    """Main entry point for the application."""
     configure_logging()
     gitlab = GitLabAdapter(token=settings.gitlab_token, base_url=settings.gitlab_url)
     ai = MistralAdapter(api_key=settings.mistral_api_key, model=settings.mistral_model)
     cache = JSONCacheAdapter(cache_file=settings.cache_file)
 
     start_scheduler(
-        lambda: run_merge_request_review(gitlab, ai, cache), settings.polling_interval
+        lambda: run_merge_request_review(gitlab, ai, cache, project_id=settings.project_id),
+        settings.polling_interval,
     )
 
     try:
         while True:
             time.sleep(1)
     except KeyboardInterrupt:
+        pass
+    finally:
         stop_scheduler()
 
 

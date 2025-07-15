@@ -8,6 +8,7 @@ MR Reviewer automatise la revue de code sur GitLab en s'appuyant sur un moteur d
 ## Fonctionnalités principales
 
 - Interrogation périodique de GitLab pour récupérer les MRs ouvertes
+- Possibilité de ne traiter qu'un projet spécifique via `PROJECT_ID`
 - Analyse du diff via Mistral et publication automatisée des commentaires
 - Gestion du nombre maximal de tokens et filtrage des MRs trop volumineuses
 - Système de cache pour éviter les doublons
@@ -33,6 +34,7 @@ GITLAB_URL=https://gitlab.com/api/v4
 MISTRAL_API_KEY=sk-xxxx
 CACHE_FILE=cache.json
 POLLING_INTERVAL=300
+PROJECT_ID=123  # Laisser vide pour traiter toutes vos MR
 MAX_TOKENS=8000
 LOG_LEVEL=INFO
 # Optionnel : fichier où enregistrer les logs

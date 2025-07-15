@@ -5,7 +5,8 @@ from app.usecases import review_merge_requests as usecase
 class DummyGitLab:
     def __init__(self):
         self.comments = []
-    def get_open_merge_requests(self):
+
+    def get_open_merge_requests(self, project_id=None):
         return [MergeRequest(id=1, project_id=1, sha="s1")]
     def get_diff(self, project_id, mr_id):
         return "good diff"
@@ -33,7 +34,7 @@ def test_run_merge_request_review(monkeypatch):
     ai = DummyAI()
     cache = DummyCache()
     monkeypatch.setattr(usecase, "settings", SimpleNamespace(max_tokens=100))
-    usecase.run_merge_request_review(gitlab, ai, cache)
+    usecase.run_merge_request_review(gitlab, ai, cache, project_id=None)
     assert ai.called == "good diff"
     assert gitlab.comments == ["reviewed"]
     assert cache.data[1] == "s1"
@@ -44,5 +45,5 @@ def test_skip_when_diff_too_large(monkeypatch):
     ai = DummyAI()
     cache = DummyCache()
     monkeypatch.setattr(usecase, "settings", SimpleNamespace(max_tokens=1))
-    usecase.run_merge_request_review(gitlab, ai, cache)
+    usecase.run_merge_request_review(gitlab, ai, cache, project_id=None)
     assert gitlab.comments == ["Diff trop volumineux pour analyse automatique."]

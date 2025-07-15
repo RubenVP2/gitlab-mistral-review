@@ -10,12 +10,14 @@ from app.ports.output.gitlab_port import GitLabPort
 from config.settings import settings
 
 
-def run_merge_request_review(gitlab: GitLabPort, ai: AIPort, cache: CachePort) -> None:
+def run_merge_request_review(
+    gitlab: GitLabPort, ai: AIPort, cache: CachePort, project_id: int | None = None
+) -> None:
     """Fetch opened MRs and post an automated review when possible."""
     logger = logging.getLogger("Review")
     engine = ReviewEngine(ai, settings.max_tokens)
 
-    for mr in gitlab.get_open_merge_requests():
+    for mr in gitlab.get_open_merge_requests(project_id=project_id):
         if cache.is_up_to_date(mr.id, mr.sha):
             logger.debug("MR %s déjà analysée", mr.id)
             continue
