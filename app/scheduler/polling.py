@@ -21,6 +21,7 @@ def start_scheduler(task: Callable[[], None], interval: int) -> None:
     global _scheduler
     scheduler = BackgroundScheduler()
     scheduler.add_job(task, "interval", seconds=interval)
+    task()  # Run the task immediately on start
     scheduler.start()
     _scheduler = scheduler
     logger.info("Scheduler démarré (intervalle=%ss)", interval)

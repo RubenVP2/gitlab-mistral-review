@@ -47,7 +47,7 @@ python -m app.main
 
 ## Comportement général
 
-- Le scheduler déclenche `review_merge_requests()` à l'intervalle défini
+- Le scheduler déclenche immédiatement `review_merge_requests()` puis à l'intervalle défini
 - Pour chaque MR détectée :
   - si elle a déjà été traitée, elle est ignorée
   - si le diff dépasse la limite autorisée, un message explicatif est envoyé
