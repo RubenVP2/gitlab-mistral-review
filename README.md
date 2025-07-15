@@ -1,43 +1,28 @@
-[![codecov](https://codecov.io/github/RubenVP2/gitlab-mistral-review/branch/master/graph/badge.svg?token=NCZ4SSC9KU)](https://codecov.io/github/RubenVP2/gitlab-mistral-review)
+# MR Reviewer - Analyse de Merge Requests avec IA
 
+MR Reviewer automatise la revue de code sur GitLab en s'appuyant sur un moteur d'intelligence artificielle (par exemple Mistral). L'application interroge régulièrement vos projets pour détecter les nouvelles demandes de fusion ou les mises à jour, génère un commentaire d'analyse et le publie directement dans la discussion de la MR.
 
-# 🤖 MR Reviewer – Analyse automatique de Merge Requests avec IA
+## Fonctionnalités principales
 
-Ce projet automatise la **review de merge requests GitLab** à l’aide d’une **intelligence artificielle (ex: Mistral)**. Il s’exécute en tâche de fond, détecte les nouvelles MR ou mises à jour, génère un commentaire d’analyse, et l’envoie dans la discussion GitLab.
+- Interrogation périodique de GitLab pour récupérer les MRs ouvertes
+- Analyse du diff via Mistral et publication automatisée des commentaires
+- Gestion du nombre maximal de tokens et filtrage des MRs trop volumineuses
+- Système de cache pour éviter les doublons
+- Architecture hexagonale claire et modulaire
 
----
+## Installation rapide
 
-## 🚀 Fonctionnalités
-
-- 🔁 Polling régulier des projets GitLab
-- 🧠 Appel à une IA (Mistral) pour analyser le `diff`
-- 📝 Post automatique de review dans la MR
-- 🧮 Gestion des limites de tokens IA
-- 🧠 Skip automatique des MRs trop volumineuses
-- 💾 Système de cache pour éviter les doublons
-- 📦 Architecture hexagonale claire et modulaire
-
----
-
-## 📦 Installation
-
-### 1. Clone
+1. Clonez le dépôt puis créez un environnement Python :
 
 ```bash
 git clone https://github.com/ton-org/mr-reviewer.git
 cd mr-reviewer
-
-```
-2. Créer un environnement Python
-
-```bash
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 3. Configuration
-Créez un fichier `.env` à la racine du projet avec les variables suivantes :
+2. Configurez l'application à l'aide d'un fichier `.env` :
 
 ```dotenv
 GITLAB_TOKEN=glpat-xxxxx
@@ -47,65 +32,43 @@ CACHE_FILE=cache.json
 POLLING_INTERVAL=300
 MAX_TOKENS=8000
 LOG_LEVEL=INFO
-# Optionnel: fichier pour stocker les logs
+# Optionnel : fichier où enregistrer les logs
 LOG_FILE=app.log
 ```
-Ces variables permettent de personnaliser le système de logs fourni par
-le projet. Par défaut les messages sont envoyés sur la console, mais vous
-pouvez spécifier `LOG_FILE` pour les écrire également dans un fichier.
-### 4. Lancer l'application
+
+3. Lancez l'application :
 
 ```bash
 python -m app.main
 ```
 
-### ⚙️ Comportement de l’application
-- 🔄 Le scheduler appelle review_merge_requests() à intervalle défini
+## Comportement général
 
-- 🧠 Le diff est évalué :
+- Le scheduler déclenche `review_merge_requests()` à l'intervalle défini
+- Pour chaque MR détectée :
+  - si elle a déjà été traitée, elle est ignorée
+  - si le diff dépasse la limite autorisée, un message explicatif est envoyé
+  - sinon la revue est générée via Mistral puis publiée
+- Les identifiants de MR sont conservés dans le cache afin d'éviter les doublons
 
-    - Si le cache indique qu’il a déjà été reviewé → skip
+## Tests
 
-    - Si le diff dépasse la limite de tokens → commentaire explicatif
-
-    - Sinon → appel à Mistral, génération de review, publication GitLab
-
-- 💾 Le SHA de la MR est persisté pour éviter les doublons
-
-### 🧠 Architecture hexagonale
-L’application suit les principes hexagonaux :
-
-- Domain : logique métier pure
-
-- Ports : interfaces pour les dépendances (GitLab, IA, cache)
-
-- Adapters : implémentations concrètes
-
-- UseCases : orchestration métier
-
-- Infrastructure : scheduling & configuration
-
-### 🧪 Tests
-Lance les tests avec :
+Exécutez la suite de tests avec :
 
 ```bash
 pytest tests/
 ```
 
-### 👨‍💻 Contribution
-1. Fork
+## Contribution
 
-2. Crée une branche feature/xxx
+1. Forkez le dépôt
+2. Créez une branche dédiée pour vos changements
+3. Vérifiez votre code via la suite de tests
+4. Ouvrez une merge request
 
-3. Teste ton code
+## Feuille de route
 
-4. Ouvre une MR ✨
-
-🧱 À venir
-- Support webhook GitLab
-
-- Interface FastAPI pour supervision
-
+- Support des webhooks GitLab
+- Interface FastAPI de supervision
 - Analyse multi-projets
-
-- Support d’autres moteurs IA
+- Compatibilité avec d'autres moteurs IA
