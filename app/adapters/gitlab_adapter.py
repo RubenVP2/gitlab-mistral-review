@@ -42,14 +42,15 @@ class GitLabAdapter(GitLabPort):
             raise
         return resp.json(), resp.headers
 
-    def get_open_merge_requests(self) -> Iterable[MergeRequest]:
-        """
-        Retrieve all open merge requests from GitLab.
+    def get_open_merge_requests(self, project_id: int | None = None) -> Iterable[MergeRequest]:
+        """Retrieve open merge requests.
 
-        Returns:
-            Iterable[MergeRequest]: An iterable of MergeRequest objects representing open merge requests.
+        When ``project_id`` is provided, only MRs of that project are returned.
         """
-        url = f"{self.base_url}/merge_requests"
+        if project_id is not None:
+            url = f"{self.base_url}/projects/{project_id}/merge_requests"
+        else:
+            url = f"{self.base_url}/merge_requests"
         params = {"state": "opened", "per_page": 100, "page": 1}
         results: List[MergeRequest] = []
         while True:

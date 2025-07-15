@@ -10,8 +10,12 @@ class GitLabPort(ABC):
     """Interface used to interact with GitLab."""
 
     @abstractmethod
-    def get_open_merge_requests(self) -> Iterable[MergeRequest]:
-        """Return currently opened merge requests."""
+    def get_open_merge_requests(self, project_id: int | None = None) -> Iterable[MergeRequest]:
+        """Return currently opened merge requests.
+
+        Args:
+            project_id: restrict search to this project when provided.
+        """
 
         raise NotImplementedError
 

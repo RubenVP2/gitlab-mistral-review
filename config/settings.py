@@ -12,6 +12,7 @@ class Settings(BaseSettings):
 
     cache_file: str = Field(default="cache.json", env="CACHE_FILE")
     polling_interval: int = Field(default=300, env="POLLING_INTERVAL")
+    project_id: int | None = Field(default=None, env="PROJECT_ID")
     max_tokens: int = Field(default=8000, env="MAX_TOKENS")
     log_level: str = Field(default="INFO", env="LOG_LEVEL")
     log_file: str | None = Field(default=None, env="LOG_FILE")
