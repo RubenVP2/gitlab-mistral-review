@@ -3,6 +3,8 @@ from pydantic import Field
 
 
 class Settings(BaseSettings):
+    """Application settings using Pydantic for configuration management."""
+
     gitlab_token: str = Field(..., env="GITLAB_TOKEN")
     gitlab_url: str = Field(default="https://gitlab.com/api/v4", env="GITLAB_URL")
     mistral_api_key: str = Field(..., env="MISTRAL_API_KEY")

@@ -1,5 +1,3 @@
-"""Very small polling scheduler."""
-
 from __future__ import annotations
 
 import logging
@@ -12,7 +10,13 @@ _scheduler: BackgroundScheduler | None = None
 
 
 def start_scheduler(task: Callable[[], None], interval: int) -> None:
-    """Run ``task`` every ``interval`` seconds using APScheduler."""
+    """
+    Start the background scheduler with the given task and interval.
+
+    Args:
+        task (Callable[[], None]): The task to run periodically.
+        interval (int): The interval in seconds at which to run the task.
+    """
     global _scheduler
     logger = logging.getLogger("Scheduler")
     scheduler = BackgroundScheduler()
@@ -23,9 +27,8 @@ def start_scheduler(task: Callable[[], None], interval: int) -> None:
 
 
 def stop_scheduler() -> None:
-    """Stop the running scheduler if any."""
+    """Stop the background scheduler if it is running."""
     global _scheduler
     if _scheduler:
         _scheduler.shutdown()
         _scheduler = None
-

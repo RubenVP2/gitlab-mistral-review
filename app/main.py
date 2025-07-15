@@ -8,6 +8,12 @@ from config.logging import configure_logging
 
 
 def main():
+    """
+    Main entry point for the application.
+
+    Initializes the logging, adapters, and starts the scheduler to review merge requests.
+    This function is responsible for setting up the environment and starting the review process.
+    """
     configure_logging()
     gitlab = GitLabAdapter(token=settings.gitlab_token, base_url=settings.gitlab_url)
     ai = MistralAdapter(api_key=settings.mistral_api_key, model=settings.mistral_model)

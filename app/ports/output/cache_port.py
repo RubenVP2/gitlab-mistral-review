@@ -1,5 +1,3 @@
-"""Port definition for the caching layer."""
-
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
@@ -19,4 +17,3 @@ class CachePort(ABC):
         """Persist that the given MR/SHA has been reviewed."""
 
         raise NotImplementedError
-

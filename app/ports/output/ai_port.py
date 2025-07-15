@@ -1,5 +1,3 @@
-"""Port definition for AI engines."""
-
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
@@ -13,4 +11,3 @@ class AIPort(ABC):
         """Return a textual review for the given diff."""
 
         raise NotImplementedError
-

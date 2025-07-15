@@ -1,5 +1,3 @@
-"""Port definition for the GitLab API."""
-
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
