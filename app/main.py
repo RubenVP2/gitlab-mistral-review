@@ -10,7 +10,7 @@ from config.logging import configure_logging
 def main():
     configure_logging()
     gitlab = GitLabAdapter(token=settings.gitlab_token, base_url=settings.gitlab_url)
-    ai = MistralAdapter(api_key=settings.mistral_api_key)
+    ai = MistralAdapter(api_key=settings.mistral_api_key, model=settings.mistral_model)
     cache = JSONCacheAdapter(cache_file=settings.cache_file)
 
     start_scheduler(

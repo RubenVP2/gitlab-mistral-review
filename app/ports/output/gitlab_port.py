@@ -18,14 +18,13 @@ class GitLabPort(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def get_diff(self, mr_id: int) -> str:
+    def get_diff(self, project_id: int, mr_id: int) -> str:
         """Return the diff of the merge request."""
 
         raise NotImplementedError
 
     @abstractmethod
-    def post_comment(self, mr_id: int, text: str) -> None:
+    def post_comment(self, project_id: int, mr_id: int, text: str) -> None:
         """Post a comment on the merge request."""
 
         raise NotImplementedError
-

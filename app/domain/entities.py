@@ -8,6 +8,7 @@ class MergeRequest:
     """Simple representation of a GitLab merge request."""
 
     id: int
+    project_id: int
     sha: str
     title: str | None = None
 

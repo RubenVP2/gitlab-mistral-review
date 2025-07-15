@@ -11,3 +11,12 @@ wheels/
 
 # Environment variables
 .env
+
+# Logs
+*.log
+
+# Cache files
+cache.json
+
+# VSCODE settings
+.vscode/

@@ -35,31 +35,26 @@ class GitLabAdapter(GitLabPort):
         results: List[MergeRequest] = []
         for mr in mrs:
             results.append(
-                MergeRequest(id=mr["iid"], sha=mr["sha"], title=mr.get("title"))
+                MergeRequest(
+                    id=mr["iid"],
+                    project_id=mr["project_id"],
+                    sha=mr["sha"],
+                    title=mr.get("title"),
+                )
             )
         self.logger.info("%d merge requests ouvertes trouvées", len(results))
         return results
 
-    def get_diff(self, mr_id: int) -> str:
-        # We need project_id to fetch the diff; fetch details first
-        details = self._request(
-            "GET", f"{self.base_url}/merge_requests/{mr_id}"
-        )
-        project_id = details["project_id"]
+    def get_diff(self, project_id: int, mr_id: int) -> str:
         url = f"{self.base_url}/projects/{project_id}/merge_requests/{mr_id}/changes"
         changes = self._request("GET", url)
-        self.logger.debug("Diff r\u00e9cup\u00e9r\u00e9 pour MR %s", mr_id)
-        return "\n".join(c.get("diff", "") for c in changes.get("changes", []))
+        self.logger.debug("Diff récupéré pour MR %s", mr_id)
+        return "\n".join(
+            c.get("new_path") + c.get("diff", "") for c in changes.get("changes", [])
+        )
 
-    def post_comment(self, mr_id: int, text: str) -> None:
-        details = self._request(
-            "GET", f"{self.base_url}/merge_requests/{mr_id}"
-        )
-        project_id = details["project_id"]
-        url = (
-            f"{self.base_url}/projects/{project_id}/merge_requests/{mr_id}/notes"
-        )
+    def post_comment(self, project_id: int, mr_id: int, text: str) -> None:
+        url = f"{self.base_url}/projects/{project_id}/merge_requests/{mr_id}/notes"
         payload = json.dumps({"body": text}).encode()
         self._request("POST", url, data=payload)
         self.logger.debug("Commentaire post\u00e9 sur MR %s", mr_id)
-

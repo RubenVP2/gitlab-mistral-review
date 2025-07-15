@@ -20,13 +20,14 @@ def run_merge_request_review(gitlab: GitLabPort, ai: AIPort, cache: CachePort) -
             logger.debug("MR %s déjà analysée", mr.id)
             continue
 
-        diff = gitlab.get_diff(mr.id)
+        diff = gitlab.get_diff(mr.project_id, mr.id)
         review = engine.review(diff)
         if review is None:
-            gitlab.post_comment(mr.id, "Diff trop volumineux pour analyse automatique.")
+            gitlab.post_comment(
+                mr.project_id, mr.id, "Diff trop volumineux pour analyse automatique."
+            )
         else:
-            gitlab.post_comment(mr.id, review)
+            gitlab.post_comment(mr.project_id, mr.id, review)
 
         cache.update_reviewed(mr.id, mr.sha)
         logger.info("MR %s analysée", mr.id)
-

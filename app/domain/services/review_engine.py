@@ -28,5 +28,5 @@ class ReviewEngine:
             self.logger.info("Diff trop volumineux pour analyse")
             return None
         self.logger.debug("Analyse du diff (%d tokens)" % self._estimate_tokens(diff))
+        self.logger.debug("Diff à analyser : %s", diff)
         return self.ai.review_diff(diff)
-

@@ -7,23 +7,23 @@ import logging
 import urllib.request
 
 from app.ports.output.ai_port import AIPort
+from config.prompt import PROMPT_IA
 
 
 class MistralAdapter(AIPort):
     """Send review requests to Mistral AI."""
 
-    def __init__(self, api_key: str, model: str = "mistral-7b") -> None:
+    def __init__(self, api_key: str, model: str = "devstral-medium-2507") -> None:
         self.api_key = api_key
         self.model = model
         self.url = "https://api.mistral.ai/v1/chat/completions"
         self.logger = logging.getLogger(self.__class__.__name__)
 
     def review_diff(self, diff: str) -> str:
-        prompt = (
-            "Please review the following Git diff and provide suggestions:\n" + diff
-        )
+        prompt = PROMPT_IA.replace("{GIT_DIFF_ICI}", diff)
         payload = {
             "model": self.model,
+            "prompt_mode": "reasoning",
             "messages": [{"role": "user", "content": prompt}],
         }
         data = json.dumps(payload).encode()
@@ -33,11 +33,11 @@ class MistralAdapter(AIPort):
         try:
             with urllib.request.urlopen(req) as resp:
                 result = json.load(resp)
-            review = result.get("choices", [{}])[0].get("message", {}).get("content", "")
-            self.logger.debug("R\u00e9ponse Mistral re\u00e7ue")
+            review = (
+                result.get("choices", [{}])[0].get("message", {}).get("content", "")
+            )
+            self.logger.debug(f"Réponse Mistral reçue : {review}")
             return review
-        except Exception:  # pragma: no cover - simple fallback
-            # Fallback in case of network issues
-            self.logger.exception("Erreur lors de l'appel \u00e0 Mistral")
-            return "AI review could not be generated."
-
+        except Exception:
+            self.logger.exception("Erreur lors de l'appel à Mistral")
+            return "Erreur de communication avec Mistral."
