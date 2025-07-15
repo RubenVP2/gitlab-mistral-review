@@ -5,7 +5,9 @@ from __future__ import annotations
 import json
 import logging
 from pathlib import Path
-from typing import Any, Dict
+from typing import Dict
+
+from filelock import FileLock
 
 from app.ports.output.cache_port import CachePort
 
@@ -17,16 +19,19 @@ class JSONCacheAdapter(CachePort):
         self.path = Path(cache_file)
         if not self.path.exists():
             self.path.write_text("{}", encoding="utf-8")
+        self.lock = FileLock(str(self.path) + ".lock")
         self.logger = logging.getLogger(self.__class__.__name__)
 
     def _load(self) -> Dict[str, str]:
-        data = json.loads(self.path.read_text(encoding="utf-8"))
+        with self.lock:
+            data = json.loads(self.path.read_text(encoding="utf-8"))
         if not isinstance(data, dict):
             return {}
         return {str(k): str(v) for k, v in data.items()}
 
     def _save(self, data: Dict[str, str]) -> None:
-        self.path.write_text(json.dumps(data), encoding="utf-8")
+        with self.lock:
+            self.path.write_text(json.dumps(data), encoding="utf-8")
 
     def is_up_to_date(self, mr_id: int, sha: str) -> bool:
         data = self._load()
