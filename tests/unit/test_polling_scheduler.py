@@ -3,15 +3,19 @@ import builtins
 
 import app.scheduler.polling as polling
 
+
 class DummyScheduler:
     def __init__(self):
         self.started = False
         self.jobs = []
         self.shutdown_called = False
+
     def add_job(self, func, trigger, seconds):
         self.jobs.append((func, trigger, seconds))
+
     def start(self):
         self.started = True
+
     def shutdown(self):
         self.shutdown_called = True
 
@@ -21,6 +25,7 @@ def test_start_and_stop_scheduler(monkeypatch):
     monkeypatch.setattr(polling, "BackgroundScheduler", lambda: dummy)
 
     called = []
+
     def task():
         called.append(True)
 

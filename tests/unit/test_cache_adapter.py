@@ -1,6 +1,7 @@
 import json
 from app.adapters.cache_adapter import JSONCacheAdapter
 
+
 def test_update_and_check(tmp_path):
     cache_file = tmp_path / "cache.json"
     cache = JSONCacheAdapter(str(cache_file))

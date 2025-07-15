@@ -20,3 +20,8 @@ cache.json
 
 # VSCODE settings
 .vscode/
+
+# Pytest cache
+.cache/
+# Coverage reports
+.coverage
