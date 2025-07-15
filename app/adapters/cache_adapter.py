@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import logging
 from pathlib import Path
 from typing import Any, Dict
 
@@ -16,6 +17,7 @@ class JSONCacheAdapter(CachePort):
         self.path = Path(cache_file)
         if not self.path.exists():
             self.path.write_text("{}", encoding="utf-8")
+        self.logger = logging.getLogger(self.__class__.__name__)
 
     def _load(self) -> Dict[str, str]:
         data = json.loads(self.path.read_text(encoding="utf-8"))
@@ -28,10 +30,13 @@ class JSONCacheAdapter(CachePort):
 
     def is_up_to_date(self, mr_id: int, sha: str) -> bool:
         data = self._load()
-        return data.get(str(mr_id)) == sha
+        result = data.get(str(mr_id)) == sha
+        self.logger.debug("MR %s up to date: %s", mr_id, result)
+        return result
 
     def update_reviewed(self, mr_id: int, sha: str) -> None:
         data = self._load()
         data[str(mr_id)] = sha
         self._save(data)
+        self.logger.debug("Cache mis \u00e0 jour pour MR %s", mr_id)
 
