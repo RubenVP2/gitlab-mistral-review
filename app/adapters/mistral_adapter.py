@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import json
 import logging
 from typing import Any
 
@@ -36,7 +35,9 @@ class MistralAdapter(AIPort):
             resp = requests.post(self.url, json=payload, headers=headers)
             resp.raise_for_status()
             result: Any = resp.json()
-            review = result.get("choices", [{}])[0].get("message", {}).get("content", "")
+            review = (
+                result.get("choices", [{}])[0].get("message", {}).get("content", "")
+            )
             self.logger.debug("Réponse Mistral reçue : %s", review)
             return review
         except requests.RequestException as exc:

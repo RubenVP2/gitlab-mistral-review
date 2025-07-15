@@ -61,10 +61,12 @@ class GitLabAdapter(GitLabPort):
         url = f"{self.base_url}/projects/{project_id}/merge_requests/{mr_id}/changes"
         changes, _ = self._request("GET", url)
         self.logger.debug("Diff récupéré pour MR %s", mr_id)
-        return "\n".join(c.get("diff", "") for c in changes.get("changes", []))
+        return "\n".join(
+            c.get("new_path") + c.get("diff", "") for c in changes.get("changes", [])
+        )
 
     def post_comment(self, project_id: int, mr_id: int, text: str) -> None:
         url = f"{self.base_url}/projects/{project_id}/merge_requests/{mr_id}/notes"
         payload = {"body": text}
         self._request("POST", url, json=payload)
-        self.logger.debug("Commentaire post\u00e9 sur MR %s", mr_id)
+        self.logger.debug("Commentaire posté sur MR %s", mr_id)
