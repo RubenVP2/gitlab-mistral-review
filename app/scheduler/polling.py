@@ -7,6 +7,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 
 
 _scheduler: BackgroundScheduler | None = None
+logger = logging.getLogger("Scheduler")
 
 
 def start_scheduler(task: Callable[[], None], interval: int) -> None:
@@ -18,7 +19,6 @@ def start_scheduler(task: Callable[[], None], interval: int) -> None:
         interval (int): The interval in seconds at which to run the task.
     """
     global _scheduler
-    logger = logging.getLogger("Scheduler")
     scheduler = BackgroundScheduler()
     scheduler.add_job(task, "interval", seconds=interval)
     task()
@@ -33,3 +33,6 @@ def stop_scheduler() -> None:
     if _scheduler:
         _scheduler.shutdown()
         _scheduler = None
+        logger.info("Scheduler arrêté")
+    else:
+        logger.warning("Aucun scheduler en cours d'exécution à arrêter")
