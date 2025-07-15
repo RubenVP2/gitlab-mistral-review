@@ -1,3 +1,6 @@
+[![codecov](https://codecov.io/github/RubenVP2/gitlab-mistral-review/branch/master/graph/badge.svg?token=NCZ4SSC9KU)](https://codecov.io/github/RubenVP2/gitlab-mistral-review)
+
+
 # 🤖 MR Reviewer – Analyse automatique de Merge Requests avec IA
 
 Ce projet automatise la **review de merge requests GitLab** à l’aide d’une **intelligence artificielle (ex: Mistral)**. Il s’exécute en tâche de fond, détecte les nouvelles MR ou mises à jour, génère un commentaire d’analyse, et l’envoie dans la discussion GitLab.
