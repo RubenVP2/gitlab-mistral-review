@@ -8,7 +8,7 @@ from config.settings import settings
 
 def main():
     gitlab = GitLabAdapter(token=settings.gitlab_token, base_url=settings.gitlab_url)
-    ai = MistralAdapter(api_key=settings.mistral_key)
+    ai = MistralAdapter(api_key=settings.mistral_api_key)
     cache = JSONCacheAdapter(cache_file=settings.cache_file)
 
     start_scheduler(
