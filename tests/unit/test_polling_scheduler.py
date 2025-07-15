@@ -30,6 +30,7 @@ def test_start_and_stop_scheduler(monkeypatch):
         called.append(True)
 
     polling.start_scheduler(task, interval=5)
+    assert called == [True]
     assert dummy.started
     assert dummy.jobs[0][1] == "interval" and dummy.jobs[0][2] == 5
     assert polling._scheduler is dummy

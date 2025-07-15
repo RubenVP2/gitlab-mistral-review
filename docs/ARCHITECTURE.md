@@ -77,7 +77,7 @@ Définit les interfaces abstraites que les adaptateurs techniques doivent implé
   Interface : `review_diff(diff: str) -> str`
 
 - **gitlab_port.py**  
-  Interface : `get_open_merge_requests()`, `get_diff(mr_id)`, `post_comment(mr_id, text)`
+  Interface : `get_open_merge_requests(project_id=None)`, `get_diff(mr_id)`, `post_comment(mr_id, text)`
 
 - **cache_port.py**  
   Interface : `is_up_to_date(mr_id, sha)`, `update_reviewed(mr_id, sha)`

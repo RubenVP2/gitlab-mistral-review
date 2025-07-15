@@ -37,6 +37,22 @@ def test_get_open_merge_requests_pagination(monkeypatch):
     assert calls[-1][2]["params"]["page"] == "2"
 
 
+def test_get_open_merge_requests_for_project(monkeypatch):
+    resp = DummyResponse([], headers={})
+    captured = {}
+
+    def fake_request(method, url, **kwargs):
+        captured["url"] = url
+        captured["params"] = kwargs["params"]
+        return resp
+
+    monkeypatch.setattr(requests, "request", fake_request)
+    adapter = GitLabAdapter(token="t", base_url="http://x")
+    list(adapter.get_open_merge_requests(project_id=5))
+    assert captured["url"].endswith("/projects/5/merge_requests")
+    assert captured["params"]["state"] == "opened"
+
+
 def test_get_diff_and_post_comment(monkeypatch):
     def fake_request(method, url, **kwargs):
         if method == "GET":
