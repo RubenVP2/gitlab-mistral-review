@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import logging
 import urllib.request
 from typing import Iterable, List
 
@@ -16,9 +17,11 @@ class GitLabAdapter(GitLabPort):
     def __init__(self, token: str, base_url: str) -> None:
         self.base_url = base_url.rstrip("/")
         self.token = token
+        self.logger = logging.getLogger(self.__class__.__name__)
 
     # internal helper
     def _request(self, method: str, url: str, data: bytes | None = None) -> any:
+        self.logger.debug("%s %s", method, url)
         req = urllib.request.Request(url, data=data, method=method)
         req.add_header("PRIVATE-TOKEN", self.token)
         if data is not None:
@@ -34,6 +37,7 @@ class GitLabAdapter(GitLabPort):
             results.append(
                 MergeRequest(id=mr["iid"], sha=mr["sha"], title=mr.get("title"))
             )
+        self.logger.info("%d merge requests ouvertes trouvées", len(results))
         return results
 
     def get_diff(self, mr_id: int) -> str:
@@ -44,6 +48,7 @@ class GitLabAdapter(GitLabPort):
         project_id = details["project_id"]
         url = f"{self.base_url}/projects/{project_id}/merge_requests/{mr_id}/changes"
         changes = self._request("GET", url)
+        self.logger.debug("Diff r\u00e9cup\u00e9r\u00e9 pour MR %s", mr_id)
         return "\n".join(c.get("diff", "") for c in changes.get("changes", []))
 
     def post_comment(self, mr_id: int, text: str) -> None:
@@ -56,4 +61,5 @@ class GitLabAdapter(GitLabPort):
         )
         payload = json.dumps({"body": text}).encode()
         self._request("POST", url, data=payload)
+        self.logger.debug("Commentaire post\u00e9 sur MR %s", mr_id)
 

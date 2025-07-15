@@ -43,7 +43,13 @@ MISTRAL_API_KEY=sk-xxxx
 CACHE_FILE=cache.json
 POLLING_INTERVAL=300
 MAX_TOKENS=8000
+LOG_LEVEL=INFO
+# Optionnel: fichier pour stocker les logs
+LOG_FILE=app.log
 ```
+Ces variables permettent de personnaliser le système de logs fourni par
+le projet. Par défaut les messages sont envoyés sur la console, mais vous
+pouvez spécifier `LOG_FILE` pour les écrire également dans un fichier.
 ### 4. Lancer l'application
 
 ```bash

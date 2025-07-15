@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import logging
 import urllib.request
 
 from app.ports.output.ai_port import AIPort
@@ -15,6 +16,7 @@ class MistralAdapter(AIPort):
         self.api_key = api_key
         self.model = model
         self.url = "https://api.mistral.ai/v1/chat/completions"
+        self.logger = logging.getLogger(self.__class__.__name__)
 
     def review_diff(self, diff: str) -> str:
         prompt = (
@@ -31,8 +33,11 @@ class MistralAdapter(AIPort):
         try:
             with urllib.request.urlopen(req) as resp:
                 result = json.load(resp)
-            return result.get("choices", [{}])[0].get("message", {}).get("content", "")
-        except Exception:
+            review = result.get("choices", [{}])[0].get("message", {}).get("content", "")
+            self.logger.debug("R\u00e9ponse Mistral re\u00e7ue")
+            return review
+        except Exception:  # pragma: no cover - simple fallback
             # Fallback in case of network issues
-            return "AI review could not be generated." 
+            self.logger.exception("Erreur lors de l'appel \u00e0 Mistral")
+            return "AI review could not be generated."
 
